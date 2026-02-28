@@ -22,25 +22,73 @@
           </>
         );
       }
-      function ChatMessage(){
+      function ChatMessage(props){
+        const {message, sender} = props;
+
+        // && -> Guard operator -> Returns the first falsy operand or the last operand if all are truthy.
         return (
           <div>
-            hello chatbot
-            <img src="user.png" width="50" />  
+            {sender==="robot" && <img src="robot.png" width="50" />}
+            {message}
+            {sender==="user" && <img src="user.png" width="50" />}
           </div>
         );
       }
+      function ChatMessages(){
+        const arr = React.useState([{
+          message:"hello Chatbot",
+          sender:"user",
+          id:"id1"
+        },
+        {
+          message:"how can I help you",
+          sender:"robot",
+          id:"id2"
+        }]);
+        // const chatMessages = arr[0]; // Data
+        // const setChatMessages = arr[1]; // Updater Function
+        const [chatMessages, setChatMessages] = arr;
+        // const [chatMessages, setChatMessages] = React.useState([{}]); 
 
-      const app = (
-        <>
-          <ChatInput />
-          <ChatMessage />
-        </>
-      );
+        function sendMessage(){
+          setChatMessages([
+            ...chatMessages, // Spread Operator
+            {
+              message:"test",
+              sender:"user",
+              id:crypto.randomUUID()
+            }
+          ]);
+        }
+
+        return (
+          <>
+            <button onClick={sendMessage}>Send Message</button>
+
+            {chatMessages.map((chatMessage)=>{
+              return (
+                <ChatMessage 
+                message={chatMessage.message} 
+                sender={chatMessage.sender} 
+                key={chatMessage.id} />
+              );
+            })}
+          </>
+        );
+      }
+
+      function App(){ 
+        return (
+          <>
+            <ChatInput />
+            <ChatMessages />
+          </>
+        );
+      }
       
       const container = document.querySelector('.js-container');
       const root=ReactDOM.createRoot(container);
-      root.render(app);
+      root.render(<App />);
 
     </script>
   </body>
