@@ -3,6 +3,22 @@
   <head>
     <title>Chatbot</title>
   </head>
+
+  <style>
+    .send-button{
+      background-color: #4CAF50; /* Green */
+      border: none;
+      color: white;
+      padding: 10px 20px;
+      text-align: center;
+      text-decoration: none;
+      display: inline-block;
+      font-size: 16px;
+      margin-left: 10px;
+      cursor: pointer;
+    }
+  </style>
+
   <body>
     <div class="js-container"></div>
 
@@ -22,7 +38,7 @@
         function saveInputText(event){
           setInputText(event.target.value)
         }
-        
+
         async function sendMessage(){
           if (isLoading || inputText === '') {
             return;
@@ -75,8 +91,14 @@
               value={inputText}
               onKeyDown={inputMethods}
             />
-            <button onClick={sendMessage}>Send</button>  
-          </>
+            <button 
+            onClick={sendMessage}
+            className="send-button" > Send 
+            </button>  
+            </>
+            // className is used instead of class because JSX is Javascript and class is a reserved keyword in JavaScript. React uses className in JSX to avoid conflicts with the JavaScript keyword.
+            // Also In the DOM API, the property name is actually: className, not class. So when React renders the JSX, it translates className to class in the actual HTML elements in the DOM
+            // JSX attributes match DOM property names, not raw HTML attributes eg. className instead of class, htmlFor instead of for, etc.
         );
       }
 
@@ -99,8 +121,17 @@
         // const setChatMessages = arr[1]; // Updater Function
         // State lifted to parent Component for sharing
 
+        const chatMsgRef = React.useRef(null); // Used instead of document.querySelector.
+        // Accessed it inside useEffect because we have to wait untill the Cmp is created to access the html and useEffect runs after the Cmp is created.
+        React.useEffect(()=>{ 
+          const chatMsgElm = chatMsgRef.current;
+          if(chatMsgElm) {
+            chatMsgElm.scrollTop = chatMsgElm.scrollHeight;
+          }
+        },[chatMessages]);
+
         return (
-          <>
+          <div ref={chatMsgRef}>
             {chatMessages.map((chatMessage)=>{
               return (
                 <ChatMessage 
@@ -109,7 +140,7 @@
                 key={chatMessage.id} />
               );
             })}
-          </>
+          </div>
         );
       }
 
